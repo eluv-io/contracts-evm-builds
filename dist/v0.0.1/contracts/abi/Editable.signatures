@@ -1,0 +1,16 @@
+Function signatures:
+70480275: addAdmin(address)
+e5975bdc: addEditor(address)
+af570c04: contentSpace()
+02d05d3f: creator()
+41c0e1b5: kill()
+8da5cb5b: owner()
+00821de3: parentAddress()
+da502ee2: rmAdmin(address)
+31e4ffbd: rmEditor(address)
+6d2e4b1b: transferCreatorship(address)
+f2fde38b: transferOwnership(address)
+
+Event signatures:
+fab88404d3a749e15a120f96063b94e67ce27ba7360469190060a9dc2d862100: NewCreator(address)
+3edd90e7770f06fafde38004653b33870066c33bfc923ff6102acd601f85dfbc: NewOwner(address)

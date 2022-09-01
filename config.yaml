@@ -7,3 +7,4 @@ versions:
   -
     tag:  "v0.0.1"
     solc: '0.8.13'
+    use:  "ca02b3f211685b5f8610ed9648b5878965ae55d5"
