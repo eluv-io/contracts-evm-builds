@@ -5,15 +5,17 @@ import (
 	"sort"
 	"testing"
 
-	//v100 "github.com/eluv-io/contracts-evm-builds/contracts-go/v1.0.0/contracts"
+	v001 "github.com/eluv-io/contracts-evm-builds/contracts-go/v0.0.1/contracts"
 
 	"github.com/eluv-io/contracts-evm-builds/contracts-go/events"
 )
 
 // TestDuplicateEvents does not look at tradable
 func TestDuplicateEvents(t *testing.T) {
-	ev100 := map[string]*events.EventInfo{}  // v100.UniqueEvents
+	t.Skip("not meaningful ")
 	evLast := map[string]*events.EventInfo{} // should be the actual last
+	_ = evLast
+	ev001 := v001.UniqueEvents
 
 	//trLast := elv_tradable.UniqueEvents
 	//fmt.Println("",
@@ -34,26 +36,27 @@ func TestDuplicateEvents(t *testing.T) {
 
 	getId := func(version, eventName string) (string, bool) {
 		switch version {
-		case "ev100":
-			if e, ok := ev100[eventName]; ok {
+		case "ev001":
+			if e, ok := ev001[eventName]; ok {
 				return e.ID.String(), true
 			}
 		}
 		return "", false
 	}
+	_ = getId
 
-	for name, ev := range evLast {
-		for _, version := range []string{"v100"} {
-			if id, ok := getId(version, name); ok && id != ev.ID.String() {
-				switch name {
-				case "RunAccessCharge", "VersionConfirm", "AccessRequest":
-					// RunAccessCharge and VersionConfirm are known to have changed
-				default:
-					t.Errorf("id mismatch - version %s, event %s", version, name)
-				}
-			}
-		}
-	}
+	//for name, ev := range evLast {
+	//for _, version := range []string{"v100"} {
+	//	if id, ok := getId(version, name); ok && id != ev.ID.String() {
+	//		switch name {
+	//		case "RunAccessCharge", "VersionConfirm", "AccessRequest":
+	//			// RunAccessCharge and VersionConfirm are known to have changed
+	//		default:
+	//			t.Errorf("id mismatch - version %s, event %s", version, name)
+	//		}
+	//	}
+	//}
+	//}
 }
 
 func TestUniqueEvents(t *testing.T) {
