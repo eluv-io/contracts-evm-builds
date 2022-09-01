@@ -1,0 +1,9 @@
+---
+build:
+  version: v1.0.0  # version of the build is informative
+
+# list of versions
+versions:
+  -
+    tag:  "v0.0.1"
+    solc: '0.8.13'
