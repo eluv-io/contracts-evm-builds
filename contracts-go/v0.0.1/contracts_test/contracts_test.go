@@ -9,6 +9,9 @@ import (
 
 	//tenant "Tenant"
 	tenant "github.com/eluv-io/contracts-evm-builds/contracts-go/v0.0.1/contracts"
+	"github.com/stretchr/testify/require"
+
+	"testing"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -18,15 +21,8 @@ import (
 	"github.com/qluvio/elv-master/format"
 )
 
-var PRIVATE_KEY = ""
+var PRIVATE_KEY = "c3b3e1110f7eebe16849fdc5e936d6a30f0211b69a6055d29fb3cef24dd94118"
 var ADDRESS_SMART_CONTRACT = "0x6958a6Ff096CEB64CA51124377F3Fd77fc3200E8"
-
-func Test_Global(t *testing.T) {
-	contentId := byte32PutString("content1")
-
-	testTenantCommitEIP191(contentId, true, "commit1")
-
-}
 
 func byte32PutString(s string) [32]byte {
 	var a [32]byte
@@ -101,7 +97,12 @@ func signTenantCommitEIP191(contentId [32]byte, force bool, newHash string) (sig
 	return
 }
 
-func testTenantCommitEIP191(contentId [32]byte, force bool, newHash string) {
+func TestTenantCommitEIP191(t *testing.T) {
+
+	var newHash = "commit1"
+	var contentId = byte32PutString("content1")
+	var force = true
+
 	sigV, sigR, sigS := signTenantCommitEIP191(contentId, force, newHash)
 
 	client, err := ethclient.Dial("https://host-766.contentfabric.io/eth")
@@ -149,6 +150,7 @@ func testTenantCommitEIP191(contentId [32]byte, force bool, newHash string) {
 		log.Fatal(err)
 	}
 	fmt.Println(tx)
+	require.NoError(t, err)
 }
 
 func signTenantCommit(contentId [32]byte, force bool, newHash string) (sigV uint8, sigR, sigS [32]byte) {
@@ -166,7 +168,11 @@ func signTenantCommit(contentId [32]byte, force bool, newHash string) (sigV uint
 	return
 }
 
-func testTenantCommit(contentId [32]byte, force bool, newHash string) {
+func TestTenantCommit(t *testing.T) {
+
+	var newHash = "commit1"
+	var contentId = byte32PutString("content1")
+	var force = true
 	sigV, sigR, sigS := signTenantCommit(contentId, force, newHash)
 
 	client, err := ethclient.Dial("https://host-766.contentfabric.io/eth")
@@ -215,4 +221,6 @@ func testTenantCommit(contentId [32]byte, force bool, newHash string) {
 	}
 
 	fmt.Println(tx)
+
+	require.NoError(t, err)
 }
