@@ -1,0 +1,5 @@
+Function signatures:
+70480275: addAdmin(address)
+e5975bdc: addEditor(address)
+da502ee2: rmAdmin(address)
+31e4ffbd: rmEditor(address)
