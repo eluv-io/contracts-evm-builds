@@ -1,23 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# This script makes sure the required versions of solc are available.
-# * unless a solc binary is found in folder '_bin/${platform}/solc/${version},
-#   the script downloads the solc binary from 'binaries.soliditylang.org'
-# * to add a new version: declare a new variable with the value of the version
-#   and add it to the 'solc_versions' variable.
+DEBUG="" # DEBUG is set via --debug
 
-#
-# versions of solc that we need
-#
-solc_0_4_24="0.4.24"
-solc_0_5_4="0.5.4"
-solc_0_8_13="0.8.13"
-solc_versions=(${solc_0_4_24} ${solc_0_5_4} ${solc_0_8_13})
-
-
-fail() {
-  echo $1
+function fail() {
+  echo "$1"
   exit 1
 }
 
@@ -29,14 +16,73 @@ function is_debug() {
     fi
 }
 
+function download_solc() {
+  local version=$1
+  local jq_cmd=".releases[\"${version}\"]"
+  local binary
+
+  # cat solc_macosx-amd64_list.json | jq '.releases["0.3.6"]'
+  binary=$( curl -q -s "https://raw.githubusercontent.com/ethereum/solc-bin/gh-pages/${platform}/list.json" | jq "${jq_cmd}" )
+  binary=${binary//'+'/'%2B'}
+  binary=${binary%\"}
+  binary=${binary#\"}
+
+  mkdir -p "${solc_folder}"/"${version}"
+  curl -q -s -o "${solc_folder}"/"${version}"/solc "https://binaries.soliditylang.org/${platform}/${binary}"
+  chmod ugo+x "${solc_folder}"/"${version}"/solc
+}
+
+# require_solc makes sure the required version of solc in $1 is available.
+# Unless a solc binary is found in folder '_bin/${platform}/solc/${version},
+# the script downloads the solc binary from 'binaries.soliditylang.org'
+function require_solc() {
+  solc_version="$1"
+
+  if is_debug; then
+    echo "verifying solc ${solc_version}"
+  fi
+
+  if ! [ -f "${solc_folder}"/"${solc_version}"/solc ]; then
+    echo "downloading solc ${solc_version}"
+    download_solc "${solc_version}"
+  fi
+
+  # if the download file contains 'xml version' it's probably an error message
+  if head -n 1 "${solc_folder}/${solc_version}/solc" | grep -q "xml version" ; then
+    # show it entirely
+    cat "${solc_folder}/${solc_version}/solc"
+    echo ""
+    echo "WARN: '${solc_version}' is probably an invalid version; see above message."
+    echo ""
+  fi
+
+  # run solc --version to check the binary
+  if is_debug; then
+      "${solc_folder}/${solc_version}/solc" --version | grep "Version: ${solc_version}+"
+  else
+      "${solc_folder}/${solc_version}/solc" --version | grep "Version: ${solc_version}+" > /dev/null
+  fi
+}
+
+function install_gojq() {
+  if ! [[ -f "${gojq_folder}/gojq" ]]; then
+      export GOBIN="${gojq_folder}"
+      go install github.com/itchyny/gojq/cmd/gojq@v0.12.8
+  fi
+  echo "${gojq_folder}/gojq"
+}
+
+function solc_dir() {
+  echo "${solc_folder}"
+}
 
 curr_dir=$1
-[ -z $curr_dir ] && fail "curr_dir not defined";
+[ -z "$curr_dir" ] && fail "curr_dir not defined";
 
-bin_folder="_bin"
-abigen_dir=$(realpath "$curr_dir")
-dist_dir=$curr_dir/dist
-mkdir -p $dist_dir
+if [[ $# -gt 1 ]]; then
+    DEBUG="$2"
+fi
+
 
 platform=""
 case $(uname) in
@@ -52,51 +98,12 @@ case $(uname) in
         ;;
 esac
 
-
+bin_folder="_bin"
 solc_folder=${curr_dir}/${bin_folder}/${platform}/solc
-mkdir -p ${solc_folder}
+mkdir -p "${solc_folder}"
 
 gojq_folder=${curr_dir}/${bin_folder}/${platform}/gojq
-mkdir -p ${gojq_folder}
+mkdir -p "${gojq_folder}"
 
-
-function downloadSolc() {
-  local version=$1
-  local jq_cmd=".releases[\"${version}\"]"
-  local binary
-
-  # cat solc_macosx-amd64_list.json | jq '.releases["0.3.6"]'
-  binary=$( curl -q -s "https://raw.githubusercontent.com/ethereum/solc-bin/gh-pages/${platform}/list.json" | jq "${jq_cmd}" )
-  binary=${binary//'+'/'%2B'}
-  binary=${binary%\"}
-  binary=${binary#\"}
-
-  mkdir -p ${solc_folder}/${version}
-  curl -q -s -o ${solc_folder}/${version}/solc "https://binaries.soliditylang.org/${platform}/${binary}"
-  chmod ugo+x ${solc_folder}/${version}/solc
-}
-
-function install_gojq() {
-  if ! [[ -f "${gojq_folder}/gojq" ]]; then
-      export GOBIN="${gojq_folder}"
-      go install github.com/itchyny/gojq/cmd/gojq@v0.12.8
-  fi
-  gojq="${gojq_folder}/gojq"
-}
-
-
-# get solc binaries
-for f in ${solc_versions[@]}; do
-  if ! [ -f ${solc_folder}/${f}/solc ]; then
-    echo "downloading solc ${f}"
-    downloadSolc ${f}
-  fi
-  # check solc
-  if is_debug; then
-      "${solc_folder}/${f}/solc" --version | grep "Version: ${f}+"
-  else
-      "${solc_folder}/${f}/solc" --version | grep "Version: ${f}+" > /dev/null
-  fi
-done
-
-install_gojq
+# invoked from config.sh
+#install_gojq

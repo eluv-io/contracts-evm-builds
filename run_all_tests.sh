@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 
-pushd contracts-go > /dev/null
-go test -count=1 .
-popd > /dev/null
+
+function fail() {
+  echo "$1"
+  exit 1
+}
+
+(
+  cd contracts-go || fail "could not cd into contracts-go"
+  go test -count=1 .
+)
 
 for dir in contracts-go/v*; do
-    pushd $dir > /dev/null
+  (
+    [[ -d "$dir" ]] || fail "not a directory: $dir"
+    cd "$dir" || exit
     go test -count=1 ./...
-    popd > /dev/null
+  )
 done
 echo "done"
