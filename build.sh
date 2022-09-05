@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 
-run_latest="true" # when "true" run latest only
+run_latest=true # when "true" run latest only
 curr_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dist_dir=$curr_dir/dist
 
@@ -54,11 +54,11 @@ function verify_versions() {
         if ! is_tag "${tag}"; then
             fail "invalid version '$idx : ${tag} - ${solc}' - tag must start with v"
         fi
-        if [[ $idx != "$last" ]] && ! [[ "${use}" = "null" ]]; then
+        if [[ "$idx" != "$last" && "${use}" != "null" ]]; then
             fail "invalid version '$idx : ${tag} - ${solc} - ${use}' - only the last version may use a commit hash"
         fi
 
-        if [[ $idx = "$last" ]] || ! [[ "${run_latest}" = "true" ]]; then
+        if [[ "$idx" = "$last" || "${run_latest}" != "true" ]]; then
             require_solc "${solc}"
         fi
 
@@ -163,11 +163,11 @@ fi
 
 case "$1" in
     -all | --all)
-        run_latest="false"
+        run_latest=false
         shift
         ;;
     -latest | --latest)
-        run_latest="true"
+        run_latest=true
         shift
         ;;
     *)
@@ -198,7 +198,7 @@ build_abigen
 
 mkdir -p "$dist_dir"
 
-if [[ "${run_latest}" == "true" ]]; then
+if [ "${run_latest}" = "true" ]; then
     build_latest
 else
     build_all
