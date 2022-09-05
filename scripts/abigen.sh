@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+curr_dir=$1
+[ -z "$curr_dir" ] && fail "curr_dir not defined";
+abigen_dir=$(realpath "$curr_dir")
+
 function build_abigen() {
   # build abigen
   echo "#### building abigen command"
@@ -14,7 +18,7 @@ function run_abigen() {
   local pkg=$2
   local out_file=$3
   if is_debug; then
-      echo "$abigen_dir/abigen" --pkg=${pkg} --out "${out_file}" --combined-json ${combined_json}
+      echo "$abigen_dir/abigen" --pkg="${pkg}" --out "${out_file}" --combined-json "${combined_json}"
   fi
-  "$abigen_dir/abigen" --pkg=${pkg} --out "${out_file}" --combined-json ${combined_json}
+  "$abigen_dir/abigen" --pkg="${pkg}" --out "${out_file}" --combined-json "${combined_json}"
 }
