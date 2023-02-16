@@ -1,0 +1,11 @@
+---
+build:
+  version: v1.0.0  # version of the build is informative
+
+# list of versions
+# for payment commerce commit
+versions:
+  -
+    tag:  "v0.0.1"
+    solc: '0.8.13'
+    use: "642e4d3191844c8e147c59bec197adf334e66532"
