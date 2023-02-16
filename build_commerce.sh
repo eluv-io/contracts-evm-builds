@@ -100,6 +100,10 @@ function build_version() {
     git checkout "$real_tag"
 
     # to install dependencies
+    if ! [ -x "$(command -v forge)" ]; then
+      echo 'Error: forge is not installed.' >&2
+      exit 1
+    fi
     forge install
 
     #
