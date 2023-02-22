@@ -95,26 +95,40 @@ function build_version() {
     git fetch -f --tags --all
     git checkout "$real_tag"
 
-    #
-    # build 'contracts'
-    #
-    local solidity_file=src/tenant/Tenant.sol
+    # to install dependencies
+    git submodule update
 
-    mkdir -p "$dist_dir/$tag/contracts"
-    run_solc "$solc_version" "$solidity_file" "$dist_dir/$tag/contracts"
+#    #
+#    # build 'contracts'
+#    #
+#    local solidity_file=src/tenant/Tenant.sol
+#
+#    mkdir -p "$dist_dir/$tag/contracts"
+#    run_solc "$solc_version" "$solidity_file" "$dist_dir/$tag/contracts"
+#
+#    mkdir -p "../../contracts-go/$tag/contracts"
+#    run_abigen "$dist_dir/$tag/contracts/combined-json/combined.json" "$pkg" "../../contracts-go/$tag/contracts/contracts.go"
+#
+#    #
+#    # build 'legacy'
+#    #
+#    solidity_file=src/legacy/main.sol
+#    mkdir -p "$dist_dir/$tag/legacy"
+#    run_solc "$solc_version" "$solidity_file" "$dist_dir/$tag/legacy"
+#
+#    mkdir -p "../../contracts-go/$tag/legacy"
+#    run_abigen "$dist_dir/$tag/legacy/combined-json/combined.json" "$pkg" "../../contracts-go/$tag/legacy/contracts.go"
 
-    mkdir -p "../../contracts-go/$tag/contracts"
-    run_abigen "$dist_dir/$tag/contracts/combined-json/combined.json" "$pkg" "../../contracts-go/$tag/contracts/contracts.go"
 
     #
-    # build 'legacy'
+    # build 'commerce'
     #
-    solidity_file=src/legacy/main.sol
-    mkdir -p "$dist_dir/$tag/legacy"
-    run_solc "$solc_version" "$solidity_file" "$dist_dir/$tag/legacy"
+    local solidity_file=src/commerce/Payment.sol
+    mkdir -p "$dist_dir/$tag/commerce"
+    run_solc "$solc_version" "$solidity_file" "$dist_dir/$tag/commerce" "openzeppelin/=lib/openzeppelin-contracts/"
 
-    mkdir -p "../../contracts-go/$tag/legacy"
-    run_abigen "$dist_dir/$tag/legacy/combined-json/combined.json" "$pkg" "../../contracts-go/$tag/legacy/contracts.go"
+    mkdir -p "../../contracts-go/$tag/commerce"
+    run_abigen "$dist_dir/$tag/commerce/combined-json/combined.json" "$pkg" "../../contracts-go/$tag/commerce/payments.go"
   )
 }
 
