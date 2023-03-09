@@ -72,16 +72,13 @@ function build_version() {
   local solc_version=$2
   local commit_hash=$3
 
-  local pkg="contracts_$tag"
-  local real_tag=$tag
 
+  local real_tag=$tag
   echo ""
   echo "== $tag =="
   if ! [[ "${commit_hash}" = "null" ]] ; then
       real_tag=$(eval echo "$commit_hash")
   fi
-  pkg="${pkg//[.]/_}" # replace '.' with '_' in package name
-  pkg=$(eval echo "$pkg")
 
   mkdir -p _build_contracts_go
   (
@@ -123,6 +120,10 @@ function build_version() {
     #
     # build 'commerce'
     #
+    local pkg="contracts_commerce_payment_$tag"
+    pkg="${pkg//[.]/_}" # replace '.' with '_' in package name
+    pkg=$(eval echo "$pkg")
+
     local solidity_file=src/commerce/Payment.sol
     mkdir -p "$dist_dir/$tag/commerce"
     run_solc "$solc_version" "$solidity_file" "$dist_dir/$tag/commerce" "openzeppelin/=lib/openzeppelin-contracts/"
