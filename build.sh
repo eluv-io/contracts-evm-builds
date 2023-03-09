@@ -120,7 +120,7 @@ function build_version() {
     #
     # build 'commerce'
     #
-    local pkg="contracts_commerce_payment_$tag"
+    local pkg="payments"
     pkg="${pkg//[.]/_}" # replace '.' with '_' in package name
     pkg=$(eval echo "$pkg")
 
