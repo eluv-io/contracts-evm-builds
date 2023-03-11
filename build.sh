@@ -96,6 +96,7 @@ function build_version() {
     git checkout "$real_tag"
 
     # to install dependencies
+    git submodule init
     git submodule update
 
     #
@@ -175,10 +176,21 @@ function build_package() {
   local pkg="${output_folder}_${tag}"
   pkg="${pkg//[.]/_}" # replace '.' with '_' in package name
   pkg=$(eval echo "$pkg")
+  event_pkg="${output_folder}/${output_folder}_go"
 
   local go_binding_dir="../../${output_folder}/${output_folder}_go"
-  mkdir -p "${go_binding_dir}"
-  cp -a "../../contracts-go/." "${go_binding_dir}"
+
+if [[ ! -d "$go_binding_dir" ]]; then
+    mkdir -p "${go_binding_dir}"
+    cp -a "../../contracts-go/events" "${go_binding_dir}/events"
+    sed "s|contracts-go|${event_pkg}|" ../../contracts-go/go.mod > "${go_binding_dir}"/go.mod
+    sed "s/contracts_go/${output_folder}_go/g" ../../contracts-go/doc.go > "${go_binding_dir}"/doc.go
+    sed -e "s/contracts_go/${output_folder}_go/" -e "s|contracts-go|${event_pkg}|" ../../contracts-go/events.go > "${go_binding_dir}"/events.go
+    sed -e "s/contracts_go/${output_folder}_go/" -e "s|contracts-go|${event_pkg}|" ../../contracts-go/unique_events_test.go > "${go_binding_dir}"/unique_events_test.go
+    ( cd "${go_binding_dir}" && go mod tidy )
+fi
+
+
   mkdir -p "${go_binding_dir}/${tag}"
 
   mkdir -p "${dist_dir}/${output_folder}/${tag}"
@@ -189,7 +201,7 @@ function build_package() {
     run_solc "$solc_version" "$solidity_file" "${dist_dir}/${output_folder}/${tag}" "${dependencies}"
   fi
 
-  run_abigen "${dist_dir}/${output_folder}/${tag}/combined-json/combined.json" "$pkg" "${go_binding_dir}/${tag}/contracts.go"
+  run_abigen "${dist_dir}/${output_folder}/${tag}/combined-json/combined.json" "$pkg" "$event_pkg" "${go_binding_dir}/${tag}/contracts.go"
 }
 
 if [[ $# -eq 0 ]]; then

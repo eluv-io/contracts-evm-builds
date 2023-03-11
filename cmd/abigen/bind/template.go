@@ -23,11 +23,12 @@ import (
 
 // tmplData is the data structure required to fill the binding template.
 type tmplData struct {
-	Package   string                   // Name of the package to place the generated file in
-	Contracts map[string]*tmplContract // List of contracts to generate into this file
-	Libraries map[string]string        // Map the bytecode's link pattern to the library name
-	Structs   map[string]*tmplStruct   // Contract struct type definitions
-	Events    []*tmplEventInfo         // list of events with unique name and ID
+	Package      string                   // Name of the package to place the generated file in
+	EventPackage string                   // Name of the event package
+	Contracts    map[string]*tmplContract // List of contracts to generate into this file
+	Libraries    map[string]string        // Map the bytecode's link pattern to the library name
+	Structs      map[string]*tmplStruct   // Contract struct type definitions
+	Events       []*tmplEventInfo         // list of events with unique name and ID
 }
 
 // tmplContract contains the data needed to generate an individual contract binding.
@@ -141,7 +142,7 @@ import (
 	"strings"
 	"reflect"
 
-    c "github.com/eluv-io/contracts-evm-builds/contracts-go/events"
+    c "github.com/eluv-io/contracts-evm-builds/{{.EventPackage}}/events"
 
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
