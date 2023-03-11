@@ -1,5 +1,5 @@
 /*
- contracts_go is the home for go bindings of eluv-io contracts
+ token_permit_go is the home for go bindings of eluv-io contracts
 */
 
-package contracts_go
+package token_permit_go

@@ -1,4 +1,4 @@
-module github.com/eluv-io/contracts-evm-builds/contracts-go
+module github.com/eluv-io/contracts-evm-builds/commerce/commerce_go
 
 go 1.13
 

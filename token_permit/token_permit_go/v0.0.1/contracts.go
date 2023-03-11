@@ -12,7 +12,7 @@ import (
 	"reflect"
 	"strings"
 
-	c "github.com/eluv-io/contracts-evm-builds/contracts-go/events"
+	c "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/events"
 
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"

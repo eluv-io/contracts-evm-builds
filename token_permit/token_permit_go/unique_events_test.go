@@ -1,13 +1,13 @@
-package contracts_go
+package token_permit_go
 
 import (
 	"fmt"
 	"sort"
 	"testing"
 
-	//v100 "github.com/eluv-io/contracts-evm-builds/contracts-go/v1.0.0/contracts"
+	//v100 "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v1.0.0/contracts"
 
-	"github.com/eluv-io/contracts-evm-builds/contracts-go/events"
+	"github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/events"
 )
 
 // TestDuplicateEvents does not look at tradable

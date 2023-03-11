@@ -1,13 +1,13 @@
-package contracts_go
+package commerce_go
 
 import (
 	"fmt"
 	"sort"
 	"testing"
 
-	//v100 "github.com/eluv-io/contracts-evm-builds/contracts-go/v1.0.0/contracts"
+	//v100 "github.com/eluv-io/contracts-evm-builds/commerce/commerce_go/v1.0.0/contracts"
 
-	"github.com/eluv-io/contracts-evm-builds/contracts-go/events"
+	"github.com/eluv-io/contracts-evm-builds/commerce/commerce_go/events"
 )
 
 // TestDuplicateEvents does not look at tradable
