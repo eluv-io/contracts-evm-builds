@@ -9,12 +9,12 @@ versions:
     solc: '0.8.13'
     solidity_file: "src/commerce/Payment.sol"
     use: "591bce9bce2ae22a4498100d046a07805f63a277"
-    output_folder: commerce
+    output_folder: "commerce"
     dependencies: "openzeppelin/=lib/openzeppelin-contracts/"
   -
     tag: "v0.0.1"
     solc: '0.8.13'
     solidity_file: "src/commerce/ElvTokenPermit.sol"
     use: "591bce9bce2ae22a4498100d046a07805f63a277"
-    output_folder: token
+    output_folder: "token"
     dependencies: "openzeppelin/=lib/openzeppelin-contracts/"

@@ -23,3 +23,7 @@ function run_abigen() {
   fi
   "$abigen_dir/abigen" --pkg="${pkg}" --event-pkg="${eventPkg}" --out "${out_file}" --combined-json "${combined_json}"
 }
+
+function rm_abigen_bin() {
+  rm "$abigen_dir/abigen"
+}

@@ -144,13 +144,8 @@ To add a new version, follow these step:
 
 * add a new `version` in the configuration
 * run `./build.sh -latest`
-* edit file `${output_folder}/${output_folder}_go/events.go` and add the new bindings to the `allEventInfos` variable, as follows:
 
-```
-	allEventInfos = []packageEvent{
-		{v100.UniqueEvents, "100"},
-	}
-```
+**Note:** The config file needs have all the versions of contracts, in order to keep the package handling events handle both old and new versions.
 
 ## tagging
 
@@ -163,11 +158,13 @@ Tagging must be done at 2 levels:
 
 Note: this can also be achieved through the github web interface.
 
+For instance, sub-module level go-binding for `commerce` contracts :
+
 ```
   $ git tag v1.0.0
-  $ git tag contracts-go/v1.0.0
+  $ git tag commerce/commerce_go/v1.0.0
   $ git push origin v1.0.0
-  $ git push origin contracts-go/v1.0.0
+  $ git push origin commerce/commerce_go/v1.0.0
 ```
 
 The version can now be imported into an external project:

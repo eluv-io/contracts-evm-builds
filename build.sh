@@ -5,6 +5,7 @@ set -Eeuo pipefail
 run_latest=true # when "true" run latest only
 curr_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 dist_dir=$curr_dir/dist
+out_dir_set=()
 
 function usage() {
     echo "usage: $0 -all|-latest [--debug]"
@@ -55,6 +56,7 @@ function verify_versions() {
         if ! is_tag "${tag}"; then
             fail "invalid version '$idx : ${tag} - ${solc}' - tag must start with v"
         fi
+
         if [[ "$idx" != "$last" && "${tag}" != "${last_tag}" && "${use}" != "null" ]]; then
             fail "invalid version '$idx : ${tag} - ${solc} - ${use}' - only the last version may use a commit hash"
         fi
@@ -151,7 +153,7 @@ function build_latest() {
 
     for ((idx=0; idx<length; ++idx)); do
       tag=$( configString ".versions[$idx].tag" )
-      if [[ $tag == $last_index_tag ]]; then
+      if [[ $tag == "$last_index_tag" ]]; then
         solc=$( configString ".versions[$idx].solc" )
         use=$( configString ".versions[$idx].use" )
         solidity_file=$( configString ".versions[$idx].solidity_file" )
@@ -179,20 +181,7 @@ function build_package() {
   event_pkg="${output_folder}/${output_folder}_go"
 
   local go_binding_dir="../../${output_folder}/${output_folder}_go"
-
-if [[ ! -d "$go_binding_dir" ]]; then
-    mkdir -p "${go_binding_dir}"
-    cp -a "../../contracts-go/events" "${go_binding_dir}/events"
-    sed "s|contracts-go|${event_pkg}|" ../../contracts-go/go.mod > "${go_binding_dir}"/go.mod
-    sed "s/contracts_go/${output_folder}_go/g" ../../contracts-go/doc.go > "${go_binding_dir}"/doc.go
-    sed -e "s/contracts_go/${output_folder}_go/" -e "s|contracts-go|${event_pkg}|" ../../contracts-go/events.go > "${go_binding_dir}"/events.go
-    sed -e "s/contracts_go/${output_folder}_go/" -e "s|contracts-go|${event_pkg}|" ../../contracts-go/unique_events_test.go > "${go_binding_dir}"/unique_events_test.go
-    ( cd "${go_binding_dir}" && go mod tidy )
-fi
-
-
   mkdir -p "${go_binding_dir}/${tag}"
-
   mkdir -p "${dist_dir}/${output_folder}/${tag}"
 
   if [[ -z "${dependencies}" ]]; then
@@ -202,6 +191,27 @@ fi
   fi
 
   run_abigen "${dist_dir}/${output_folder}/${tag}/combined-json/combined.json" "$pkg" "$event_pkg" "${go_binding_dir}/${tag}/contracts.go"
+}
+
+function run_gomod_tidy(){
+  length=$( config ".versions | length" )
+
+  for ((idx=0; idx<length; ++idx)); do
+    output_folder=$( configString ".versions[$idx].output_folder" )
+    output_folder="${output_folder}/${output_folder}_go"
+    if [ ${#out_dir_set[@]} -eq 0 ]; then
+        out_dir_set+=( "${output_folder}" )
+        ( cd "${output_folder}" && go mod tidy )
+    else
+       for f in "${out_dir_set[@]}"; do
+         if [[ $f == "${output_folder}" ]]; then
+           break
+         fi
+         out_dir_set+=( "${output_folder}" )
+         ( cd "${output_folder}" && go mod tidy )
+       done
+    fi
+  done
 }
 
 if [[ $# -eq 0 ]]; then
@@ -228,6 +238,7 @@ esac
 source scripts/build-common.sh "$curr_dir" "$@"
 source scripts/solc.sh
 source scripts/abigen.sh "$curr_dir"
+source scripts/eventpkggen.sh "$curr_dir"
 source scripts/config.sh
 
 read_config config.yaml
@@ -243,6 +254,8 @@ fi
 
 # build 'our' abigen
 build_abigen
+# build eventpkggen
+build_eventpkggen
 
 dist_dir="../../dist"
 mkdir -p "$dist_dir"
@@ -252,5 +265,13 @@ if [ "${run_latest}" = "true" ]; then
 else
     build_all
 fi
+
+run_eventpkggen
+
+rm_abigen_bin
+rm_eventpkggen_bin
+
+#run go mod tidy
+run_gomod_tidy
 
 echo "done"
