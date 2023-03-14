@@ -50,7 +50,7 @@ const (
 // to be used as is in client code, but rather as an intermediate struct which
 // enforces compile time type safety and naming convention opposed to having to
 // manually maintain hard coded strings that break on runtime.
-func Bind(types []string, abis []string, bytecodes []string, fsigs []map[string]string, pkg string, lang Lang, libs map[string]string, aliases map[string]string) (string, error) {
+func Bind(types []string, abis []string, bytecodes []string, fsigs []map[string]string, pkg string, eventPkg string, lang Lang, libs map[string]string, aliases map[string]string) (string, error) {
 	var (
 		// contracts is the map of each individual contract requested binding
 		contracts = make(map[string]*tmplContract)
@@ -293,7 +293,7 @@ func Bind(types []string, abis []string, bytecodes []string, fsigs []map[string]
 		for _, event := range evByFullSig {
 			sort.Strings(event.contracts)
 			log.Info(event.ev.Normalized.Name, "hash", event.ev.Normalized.ID.String(), "<-", strings.Join(event.contracts, ","))
-			//log.Info(event.ev.Normalized.Name, "<-", len(event.contracts))
+			// log.Info(event.ev.Normalized.Name, "<-", len(event.contracts))
 
 			event.ev.KType = event.contracts[0]
 			if len(evByFullSig) > 1 {
@@ -318,11 +318,12 @@ func Bind(types []string, abis []string, bytecodes []string, fsigs []map[string]
 	}
 	// Generate the contract template data content and render it
 	data := &tmplData{
-		Package:   pkg,
-		Contracts: contracts,
-		Events:    uniqueEvents,
-		Libraries: libs,
-		Structs:   structs,
+		Package:      pkg,
+		EventPackage: eventPkg,
+		Contracts:    contracts,
+		Events:       uniqueEvents,
+		Libraries:    libs,
+		Structs:      structs,
 	}
 
 	funcs := map[string]interface{}{

@@ -67,6 +67,10 @@ var (
 		Name:  "pkg",
 		Usage: "Package name to generate the binding into",
 	}
+	eventPkgFlag = cli.StringFlag{
+		Name:  "event-pkg",
+		Usage: "Event Package name to generate the binding into",
+	}
 	outFlag = cli.StringFlag{
 		Name:  "out",
 		Usage: "Output file for the generated binding (default = stdout)",
@@ -113,6 +117,7 @@ func init() {
 		jsonFlag,
 		excFlag,
 		pkgFlag,
+		eventPkgFlag,
 		outFlag,
 		langFlag,
 		aliasFlag,
@@ -125,6 +130,9 @@ func abigen(c *cli.Context) error {
 	utils.CheckExclusive(c, abiFlag, jsonFlag) // Only one source can be selected.
 	if c.GlobalString(pkgFlag.Name) == "" {
 		utils.Fatalf("No destination package specified (--pkg)")
+	}
+	if c.GlobalString(eventPkgFlag.Name) == "" {
+		utils.Fatalf("No destination event package specified (--event-pkg)")
 	}
 	var lang bind.Lang
 	switch c.GlobalString(langFlag.Name) {
@@ -243,7 +251,7 @@ func abigen(c *cli.Context) error {
 		}
 	}
 	// Generate the contract binding
-	code, err := bind.Bind(types, abis, bins, sigs, c.GlobalString(pkgFlag.Name), lang, libs, aliases)
+	code, err := bind.Bind(types, abis, bins, sigs, c.GlobalString(pkgFlag.Name), c.GlobalString(eventPkgFlag.Name), lang, libs, aliases)
 	if err != nil {
 		utils.Fatalf("Failed to generate ABI binding: %v", err)
 	}
