@@ -5,8 +5,9 @@ import (
 	"sort"
 	"testing"
 
-	//v100 "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v1.0.0/contracts"
-
+	
+    //"github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.1"
+    
 	"github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/events"
 )
 
