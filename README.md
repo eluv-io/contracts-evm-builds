@@ -145,7 +145,7 @@ To add a new version, follow these step:
 * add a new `version` in the configuration
 * run `./build.sh -latest`
 
-**Note:** The config file needs have all the versions of contracts, in order to keep the package handling events handle both old and new versions.
+**Note:** The config file needs to have all the versions of contracts, in order to keep the event maps handle both old and new versions.
 
 ## tagging
 
