@@ -2,11 +2,13 @@ package gen
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path"
+	"sort"
 	"strings"
 
 	"github.com/eluv-io/contracts-evm-builds/cmd/eventpkggen/tmpl"
+	"github.com/hashicorp/go-version"
 	"gopkg.in/yaml.v3"
 )
 
@@ -31,7 +33,7 @@ type EventPkgGenConfig struct {
 func NewEventPkgGenConfig(cfgfile string) (cfg *EventPkgGenConfig, err error) {
 
 	var yamlOutput []byte
-	yamlOutput, err = ioutil.ReadFile(cfgfile)
+	yamlOutput, err = os.ReadFile(cfgfile)
 	if err != nil {
 		return nil, fmt.Errorf("error reading config file:%v\n", err)
 	}
@@ -49,14 +51,14 @@ func NewEventPkgGenConfig(cfgfile string) (cfg *EventPkgGenConfig, err error) {
 	return
 }
 
-func (cfg *EventPkgGenConfig) BuildTemplateStruct() map[string]tmpl.TemplateStruct {
-	outputDirToTmplStructMap := make(map[string]tmpl.TemplateStruct)
+func (cfg *EventPkgGenConfig) BuildTemplateStruct() map[string]*tmpl.TemplateStruct {
+	outputDirToTmplStructMap := make(map[string]*tmpl.TemplateStruct)
 
 	for i := 0; i < len(cfg.Versions); i++ {
 		if _, ok := outputDirToTmplStructMap[cfg.Versions[i].OutputFolder]; ok {
 			outputDirToTmplStructMap[cfg.Versions[i].OutputFolder].Tags[cfg.Versions[i].Tag] = generateTagInfo(cfg.Versions[i])
 		} else {
-			outputDirToTmplStructMap[cfg.Versions[i].OutputFolder] = tmpl.TemplateStruct{
+			outputDirToTmplStructMap[cfg.Versions[i].OutputFolder] = &tmpl.TemplateStruct{
 				PackageName: strings.Join([]string{cfg.Versions[i].OutputFolder, "_go"}, ""),
 				InputFile:   cfg.Versions[i].SolidityFile,
 				OutputPath:  path.Join(cfg.Versions[i].OutputFolder, strings.Join([]string{cfg.Versions[i].OutputFolder, "_go"}, "")),
@@ -65,6 +67,17 @@ func (cfg *EventPkgGenConfig) BuildTemplateStruct() map[string]tmpl.TemplateStru
 				},
 			}
 		}
+	}
+
+	for outputDir, tmplStruct := range outputDirToTmplStructMap {
+		var versions []*version.Version
+		for _, v := range tmplStruct.Tags {
+			ver, _ := version.NewVersion(v.Tag)
+			versions = append(versions, ver)
+		}
+		sort.Sort(version.Collection(versions))
+		latestVer := versions[len(versions)-1].String()
+		outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer].TagPackageName
 	}
 	return outputDirToTmplStructMap
 }

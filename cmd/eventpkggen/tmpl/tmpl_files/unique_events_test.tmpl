@@ -4,21 +4,22 @@ import (
 	"fmt"
 	"sort"
 	"testing"
-
-	{{ range $k,$v:=.Tags }}
-    //"github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.Tag }}"
-    {{ end }}
-	"github.com/eluv-io/contracts-evm-builds/{{ .OutputPath }}/events"
+    {{ range $k,$v:=.Tags }}
+    "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.Tag }}"{{ end }}
 )
 
 // TestDuplicateEvents does not look at tradable
 func TestDuplicateEvents(t *testing.T) {
-	ev100 := map[string]*events.EventInfo{}  // v100.UniqueEvents
-	evLast := map[string]*events.EventInfo{} // should be the actual last
+    {{ range $k,$v:=.Tags }}
+    e{{ $v.TagName }}:= {{ $v.TagPackageName }}.UniqueEvents{{ end }}
+	evLast := {{ .LatestTagPackageName }}.UniqueEvents
+
+	tagsList :=  []string{ {{ range $k,$v:=.Tags }}
+	    "e{{ $v.TagName }}",{{end}}
+	}
 
 	//trLast := elv_tradable.UniqueEvents
 	//fmt.Println("",
-	//	"201903", len(ev201903),
 	//	"202002", len(ev202002),
 	//	"202008", len(ev202008),
 	//	"latest", len(evLast),
@@ -33,28 +34,29 @@ func TestDuplicateEvents(t *testing.T) {
 		all:   126
 	*/
 
+
 	getId := func(version, eventName string) (string, bool) {
-		switch version {
-		case "ev100":
-			if e, ok := ev100[eventName]; ok {
-				return e.ID.String(), true
-			}
-		}
-		return "", false
-	}
+        switch version { {{ range $k,$v:=.Tags }}
+         case "e{{ $v.TagName }}":
+           if e, ok := e{{ $v.TagName }}[eventName]; ok {
+               return e.ID.String(), true
+           }{{ end }}
+        }
+        return "", false
+    }
 
 	for name, ev := range evLast {
-		for _, version := range []string{"v100"} {
-			if id, ok := getId(version, name); ok && id != ev.ID.String() {
-				switch name {
-				case "RunAccessCharge", "VersionConfirm", "AccessRequest":
-					// RunAccessCharge and VersionConfirm are known to have changed
-				default:
-					t.Errorf("id mismatch - version %s, event %s", version, name)
-				}
-			}
-		}
-	}
+        for _, version := range tagsList {
+            if id, ok := getId(version, name); ok && id != ev.ID.String() {
+                switch name {
+                case "RunAccessCharge", "VersionConfirm", "AccessRequest":
+                    // RunAccessCharge and VersionConfirm are known to have changed
+                default:
+                    t.Errorf("id mismatch - version %s, event %s", version, name)
+                }
+            }
+        }
+    }
 }
 
 func TestUniqueEvents(t *testing.T) {

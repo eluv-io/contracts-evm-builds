@@ -170,5 +170,5 @@ For instance, sub-module level go-binding for `commerce` contracts :
 The version can now be imported into an external project:
 
 ```
-go get -d github.com/eluv-io/contracts-evm-builds/contracts-go@v1.0.0
+go get -d github.com/eluv-io/contracts-evm-builds/commerce/commerce_go@v1.0.0
 ```

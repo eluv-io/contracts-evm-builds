@@ -10,9 +10,11 @@ import (
 
 func main() {
 	args := os.Args
-	if len(args) != 2 {
-		log.Fatalf("config file not provided\n")
+	if len(args) != 2 || args[1] == "-h" {
+		fmt.Println(fmt.Sprintf("usage: %s config.yaml \n", args[0]))
+		log.Fatalf("A config file must be provided")
 	}
+
 	cfg, err := gen.NewEventPkgGenConfig(args[1])
 	if err != nil {
 		log.Fatalf("err:%v\n", err)
