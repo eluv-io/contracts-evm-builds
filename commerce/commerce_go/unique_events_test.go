@@ -18,23 +18,6 @@ func TestDuplicateEvents(t *testing.T) {
 	    "ev001",
 	}
 
-	//trLast := elv_tradable.UniqueEvents
-	//fmt.Println("",
-	//	"202002", len(ev202002),
-	//	"202008", len(ev202008),
-	//	"latest", len(evLast),
-	//	"tradable", len(trLast),
-	//	"all", len(UniqueEvents))
-	/*
-		201903: 26 only in this version
-		202002:  3 duplicates of other versions
-		202008:  1 only in this version (CreateExtUserWallet)
-		latest: 81
-		trad:   15
-		all:   126
-	*/
-
-
 	getId := func(version, eventName string) (string, bool) {
         switch version { 
          case "ev001":
