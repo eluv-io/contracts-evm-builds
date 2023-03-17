@@ -6,11 +6,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/eluv-io/contracts-evm-builds/{{ .OutputPath }}/events"
-	{{ range $k,$v:=.Tags }}
-     "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.Tag }}"
-    {{ end }}
-
+	"github.com/eluv-io/contracts-evm-builds/{{ .OutputPath }}/events"{{ range $k,$v:=.Tags }}
+    "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.Tag }}"{{ end }}
 )
 
 var (
@@ -28,10 +25,8 @@ var (
 	// EventNamesByID contains all event names keyed by their id (topic hash)
 	EventNamesByID = make(map[common.Hash]string)
 
-	allEventInfos = []packageEvent{
-		{{ range $k,$v:=.Tags }}
-		{ {{ $v.TagPackageName }}.UniqueEvents, "{{ $v.TagName }}" },
-		{{ end }}
+	allEventInfos = []packageEvent{ {{ range $k,$v:=.Tags }}
+		{ {{ $v.TagPackageName }}.UniqueEvents, "{{ $v.TagName }}" },{{ end }}
 	}
 )
 

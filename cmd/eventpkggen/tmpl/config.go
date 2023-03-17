@@ -1,12 +1,18 @@
 package tmpl
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 	"text/template"
+)
+
+var (
+	//go:embed tmpl_files/*
+	tmpl embed.FS
 )
 
 type TagInfo struct {
@@ -15,20 +21,21 @@ type TagInfo struct {
 	TagPackageName string
 }
 type TemplateStruct struct {
-	PackageName string
-	InputFile   string
-	OutputPath  string
-	Tags        map[string]TagInfo
+	PackageName          string
+	InputFile            string
+	OutputPath           string
+	LatestTagPackageName string
+	Tags                 map[string]TagInfo
 }
 
 func (ts *TemplateStruct) GenerateEventPkgFiles() error {
 
 	var tmplFiles []string
-	err := filepath.Walk("cmd/eventpkggen/tmpl/tmpl_files", func(path string, info os.FileInfo, err error) error {
+	err := fs.WalkDir(tmpl, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf("err:%v\n", err)
 		}
-		if !info.IsDir() {
+		if !d.IsDir() {
 			tmplFiles = append(tmplFiles, path)
 		}
 		return nil
@@ -37,7 +44,7 @@ func (ts *TemplateStruct) GenerateEventPkgFiles() error {
 		return err
 	}
 
-	t, err := template.ParseFiles(tmplFiles...)
+	t, err := template.ParseFS(tmpl, tmplFiles...)
 	if err != nil {
 		return fmt.Errorf("Failed to parse template files:%v\n", err)
 	}

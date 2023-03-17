@@ -21,8 +21,4 @@ function run_eventpkggen() {
   "$eventpkggen_dir/eventpkggen" "config.yaml"
 }
 
-function rm_eventpkggen_bin() {
-  rm "$eventpkggen_dir/eventpkggen"
-}
-
 

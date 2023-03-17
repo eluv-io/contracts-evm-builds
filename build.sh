@@ -268,9 +268,6 @@ fi
 
 run_eventpkggen
 
-rm_abigen_bin
-rm_eventpkggen_bin
-
 #run go mod tidy
 run_gomod_tidy
 

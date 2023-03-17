@@ -145,7 +145,7 @@ To add a new version, follow these step:
 * add a new `version` in the configuration
 * run `./build.sh -latest`
 
-**Note:** The config file needs have all the versions of contracts, in order to keep the package handling events handle both old and new versions.
+**Note:** The config file needs to have all the versions of contracts, in order to keep the event maps handle both old and new versions.
 
 ## tagging
 
@@ -170,5 +170,5 @@ For instance, sub-module level go-binding for `commerce` contracts :
 The version can now be imported into an external project:
 
 ```
-go get -d github.com/eluv-io/contracts-evm-builds/contracts-go@v1.0.0
+go get -d github.com/eluv-io/contracts-evm-builds/commerce/commerce_go@v1.0.0
 ```
