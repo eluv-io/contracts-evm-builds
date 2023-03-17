@@ -4,21 +4,22 @@ import (
 	"fmt"
 	"sort"
 	"testing"
-
-	
-    //"github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.1"
     
-	"github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/events"
+    "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.1"
 )
 
 // TestDuplicateEvents does not look at tradable
 func TestDuplicateEvents(t *testing.T) {
-	ev100 := map[string]*events.EventInfo{}  // v100.UniqueEvents
-	evLast := map[string]*events.EventInfo{} // should be the actual last
+    
+    ev001:= token_permit_v0_0_1.UniqueEvents
+	evLast := token_permit_v0_0_1.UniqueEvents
+
+	tagsList :=  []string{ 
+	    "ev001",
+	}
 
 	//trLast := elv_tradable.UniqueEvents
 	//fmt.Println("",
-	//	"201903", len(ev201903),
 	//	"202002", len(ev202002),
 	//	"202008", len(ev202008),
 	//	"latest", len(evLast),
@@ -33,28 +34,29 @@ func TestDuplicateEvents(t *testing.T) {
 		all:   126
 	*/
 
+
 	getId := func(version, eventName string) (string, bool) {
-		switch version {
-		case "ev100":
-			if e, ok := ev100[eventName]; ok {
-				return e.ID.String(), true
-			}
-		}
-		return "", false
-	}
+        switch version { 
+         case "ev001":
+           if e, ok := ev001[eventName]; ok {
+               return e.ID.String(), true
+           }
+        }
+        return "", false
+    }
 
 	for name, ev := range evLast {
-		for _, version := range []string{"v100"} {
-			if id, ok := getId(version, name); ok && id != ev.ID.String() {
-				switch name {
-				case "RunAccessCharge", "VersionConfirm", "AccessRequest":
-					// RunAccessCharge and VersionConfirm are known to have changed
-				default:
-					t.Errorf("id mismatch - version %s, event %s", version, name)
-				}
-			}
-		}
-	}
+        for _, version := range tagsList {
+            if id, ok := getId(version, name); ok && id != ev.ID.String() {
+                switch name {
+                case "RunAccessCharge", "VersionConfirm", "AccessRequest":
+                    // RunAccessCharge and VersionConfirm are known to have changed
+                default:
+                    t.Errorf("id mismatch - version %s, event %s", version, name)
+                }
+            }
+        }
+    }
 }
 
 func TestUniqueEvents(t *testing.T) {

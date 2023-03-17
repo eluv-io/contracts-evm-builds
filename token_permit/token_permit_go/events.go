@@ -7,10 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/events"
-	
-     "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.1"
-    
-
+    "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.1"
 )
 
 var (
@@ -28,10 +25,8 @@ var (
 	// EventNamesByID contains all event names keyed by their id (topic hash)
 	EventNamesByID = make(map[common.Hash]string)
 
-	allEventInfos = []packageEvent{
-		
+	allEventInfos = []packageEvent{ 
 		{ token_permit_v0_0_1.UniqueEvents, "v001" },
-		
 	}
 )
 
