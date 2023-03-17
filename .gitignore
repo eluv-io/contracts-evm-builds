@@ -14,6 +14,7 @@
 
 /.idea
 /abigen
+/eventpkggen
 
 # tools & temp directories
 _build_contracts_go/
