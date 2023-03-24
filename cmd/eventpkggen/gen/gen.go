@@ -88,16 +88,10 @@ func (cfg *EventPkgGenConfig) BuildTemplateStruct() map[string]*tmpl.TemplateStr
 }
 
 func generateTagInfo(v VersionInfo) tmpl.TagInfo {
-	var tag string
-	if strings.Contains(v.Tag, "dev") {
-		tag = strings.TrimSuffix(v.Tag, "-dev")
-	} else {
-		tag = v.Tag
-	}
-	tagName := strings.Replace(v.Tag, "-", "_", -1) // for "-dev"
+	tagName := strings.Replace(v.Tag, "-", "_", -1)
 
 	return tmpl.TagInfo{
-		Tag:     tag,
+		Tag:     v.Tag,
 		TagName: strings.Replace(tagName, ".", "", -1),
 		TagPackageName: strings.Join(
 			[]string{v.OutputFolder,
