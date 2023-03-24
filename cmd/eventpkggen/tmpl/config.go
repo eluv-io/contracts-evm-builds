@@ -19,6 +19,7 @@ type TagInfo struct {
 	Tag            string
 	TagName        string
 	TagPackageName string
+	TagImportName  string
 }
 type TemplateStruct struct {
 	PackageName          string

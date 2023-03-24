@@ -176,7 +176,7 @@ function build_package() {
   local dependencies=$4
 
   local pkg="${output_folder}_${tag}"
-  pkg="${pkg//[.]/_}" # replace '.' with '_' in package name
+  pkg="${pkg//[.-]/_}" # replace '.' with '_' in package name
   pkg=$(eval echo "$pkg")
   event_pkg="${output_folder}/${output_folder}_go"
 

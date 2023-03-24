@@ -5,7 +5,7 @@ import (
 	"sort"
 	"testing"
     {{ range $k,$v:=.Tags }}
-    "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.Tag }}"{{ end }}
+    "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.TagImportName }}"{{ end }}
 )
 
 // TestDuplicateEvents does not look at tradable
