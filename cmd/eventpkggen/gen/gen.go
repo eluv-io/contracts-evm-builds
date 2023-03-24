@@ -77,17 +77,31 @@ func (cfg *EventPkgGenConfig) BuildTemplateStruct() map[string]*tmpl.TemplateStr
 		}
 		sort.Sort(version.Collection(versions))
 		latestVer := versions[len(versions)-1].String()
-		outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer].TagPackageName
+		if _, ok := tmplStruct.Tags["v"+latestVer+"-dev"]; ok {
+			outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer+"-dev"].TagPackageName
+		} else {
+			outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer].TagPackageName
+		}
+
 	}
 	return outputDirToTmplStructMap
 }
 
 func generateTagInfo(v VersionInfo) tmpl.TagInfo {
+	var tag string
+	if strings.Contains(v.Tag, "dev") {
+		tag = strings.TrimSuffix(v.Tag, "-dev")
+	} else {
+		tag = v.Tag
+	}
+	tagName := strings.Replace(v.Tag, "-", "_", -1) // for "-dev"
+
 	return tmpl.TagInfo{
-		Tag:     v.Tag,
-		TagName: strings.Replace(v.Tag, ".", "", -1),
+		Tag:     tag,
+		TagName: strings.Replace(tagName, ".", "", -1),
 		TagPackageName: strings.Join(
 			[]string{v.OutputFolder,
-				strings.Replace(v.Tag, ".", "_", -1)}, "_"),
+				strings.Replace(tagName, ".", "_", -1)}, "_"),
+		TagImportName: v.Tag,
 	}
 }

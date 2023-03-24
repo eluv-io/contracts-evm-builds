@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/eluv-io/contracts-evm-builds/{{ .OutputPath }}/events"{{ range $k,$v:=.Tags }}
-    "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.Tag }}"{{ end }}
+    "github.com/eluv-io/contracts-evm-builds/{{ $.OutputPath }}/{{ $v.TagImportName }}"{{ end }}
 )
 
 var (
