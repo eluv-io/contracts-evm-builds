@@ -5,23 +5,23 @@ import (
 	"sort"
 	"testing"
     
-    "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.1"
+    "github.com/eluv-io/contracts-evm-builds/token_permit/token_permit_go/v0.0.0-dev"
 )
 
 // TestDuplicateEvents does not look at tradable
 func TestDuplicateEvents(t *testing.T) {
     
-    ev001:= token_permit_v0_0_1.UniqueEvents
-	evLast := token_permit_v0_0_1.UniqueEvents
+    ev000_dev:= token_permit_v0_0_0_dev.UniqueEvents
+	evLast := token_permit_v0_0_0_dev.UniqueEvents
 
 	tagsList :=  []string{ 
-	    "ev001",
+	    "ev000_dev",
 	}
 
 	getId := func(version, eventName string) (string, bool) {
         switch version { 
-         case "ev001":
-           if e, ok := ev001[eventName]; ok {
+         case "ev000_dev":
+           if e, ok := ev000_dev[eventName]; ok {
                return e.ID.String(), true
            }
         }

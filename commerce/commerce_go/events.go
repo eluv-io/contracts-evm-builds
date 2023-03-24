@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/eluv-io/contracts-evm-builds/commerce/commerce_go/events"
-    "github.com/eluv-io/contracts-evm-builds/commerce/commerce_go/v0.0.1"
+    "github.com/eluv-io/contracts-evm-builds/commerce/commerce_go/v0.0.0-dev"
 )
 
 var (
@@ -26,7 +26,7 @@ var (
 	EventNamesByID = make(map[common.Hash]string)
 
 	allEventInfos = []packageEvent{ 
-		{ commerce_v0_0_1.UniqueEvents, "v001" },
+		{ commerce_v0_0_0_dev.UniqueEvents, "v000_dev" },
 	}
 )
 
