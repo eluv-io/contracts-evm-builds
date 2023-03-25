@@ -16,6 +16,9 @@ The configuration is mainly a list of `versions`. A version is made of:
     * tags *must* start with a 'v'
     * on the last version **only** tag may designate a _future_ tag when field `use` points to a commit hash
 * `use` : a commit hash. Must not be set except within the last version, when `tag` is intended to be a _future_ tag.
+* `solidity_file` : source file in the `contracts-evm` repo.
+* `dependencies` : comma separated list of dependencies. Example : `dependencies: "openzeppelin/=lib/openzeppelin-contracts/"`
+* `output_folder` : folder name to put the raw output under dist and to generate go_bindings. The go_bindings will be generated in `${output_folder}/${output_folder}_go` folder.
 
 Within the last version, `tag` might be used to specify the value of the _future_ tag that will be used for the version.
 In that case the field `use` must specify the commit hash to use.
@@ -31,24 +34,26 @@ build:
 versions:
   -
     tag: "v0.0.1" # tag to retrieve the contract version Tags must start with v
-    solc: "0.5.4" # version of the solidity compiler to user
+    solc: "0.5.4" # version of the solidity compiler to use
+    solidity_file: "src/legacy/main.sol"
+    output_folder: "legacy"
   -
     tag: 'v1.0.0'
     solc: '0.8.13'
+    solidity_file: "<PATH/TO/FILE>"
+    output_folder: "<PATH/TO/FOLDER>"
   -
     tag: "v1.2.0"  # only on last version tag may reflect the future tag when 'use' is a commit hash 
     solc: "0.8.13"
-    use: "5f7a39e46d57232da5db9df5104de8c877544504" # only last version may use a commit hash
+    use: "591bce9bce2ae22a4498100d046a07805f63a277" # only last version may use a commit hash
+    solidity_file: "src/commerce/Payment.sol"
+    output_folder: "commerce"
+    dependencies: "openzeppelin/=lib/openzeppelin-contracts/"
 ```
 
 ## build script
 
-The build script makes builds for two contracts projects - 'new contracts' and 'legacy' - in `github.com/eluv-io/contracts-evm`.
-
-The corresponding main files are:
-
-* new-contracts: `src/tenant/Tenant.sol`
-* legacy: `src/legacy/main.sol`
+The build script generates go-bindings, abi, bin and combined-json for all the contract versions if `-all` flag is provided or only the latest tag if `-latest` flag is provided.
 
 ```
 usage: ./build.sh -all|-latest [--debug]
@@ -64,74 +69,73 @@ Build contracts versions defined in 'config.yaml'
 
 The build output goes into 2 sub-folders:
 
-* `dist`: for each version contains sub folders with dedicated outputs of `solc`
+* `dist`: contains `ouptut_folder`(provided config file) with sub folders for each version with dedicated outputs of `solc`
     * `abi`: abi and signatures of contracts
     * `bin`: binaries of contracts
     * `combined-json`: contains one single file `combined.json` used as input of `abigen`
-* `contracts-go`: for each version contains bindings for the `go` language.
+* `${ouput_folder}/${output_folder}_go`: for each version contains bindings for the `go` language.
 
 Shortened view of the `dist` folder:
 
+contains `commerce` and `token_permit` abi, bin and combined-json.
 ```
-dist/
-├── v0.0.1
-│   ├── contracts
-│   │   ├── abi
+dist
+├── commerce
+│   └── v0.0.1
+│       ├── abi
+│       │   ├── Address.abi
+│       │   ├── Address.signatures
 ...
-│   │   │   ├── Tenant.abi
-│   │   │   └── Tenant.signatures
-│   │   ├── bin
+│       │   ├── Payment.signatures
+│       │   ├── PaymentSplitter.abi
+│       │   ├── PaymentSplitter.signatures
+│       │   └── SafeERC20.signatures
+│       ├── bin
+│       │   ├── Address.bin
 ...
-│   │   │   └── Tenant.bin
-│   │   └── combined-json
-│   │       └── combined.json
-│   └── legacy
-│       ├── abi
-...
-│       │   ├── UserSpace.abi
-│       │   └── UserSpace.signatures
-│       ├── bin
-...
-│       │   └── UserSpace.bin
-│       └── combined-json
-│           └── combined.json
-├── v1.0.0
-│   ├── contracts
-│   └── legacy
-└── v1.2.0
-    ├── contracts
-    └── legacy
+│       │   ├── PaymentSplitter.bin
+│       │   └── SafeERC20.bin
+│       └── combined-json
+│           └── combined.json
+└── token
+    └── v0.0.1
+        ├── abi
+        │   ├── Context.abi
+        │   ├── Context.signatures
+        ...
+        │   ├── Ownable.signatures
+        │   ├── SignedMath.abi
+        │   ├── SignedMath.signatures
+        │   ├── Strings.abi
+        │   └── Strings.signatures
+        ├── bin
+        │   ├── Context.bin
+        │   ├── Counters.bin
+        ...
+        │   ├── SignedMath.bin
+        │   └── Strings.bin
+        └── combined-json
+            └── combined.json
+
 ```
 
-View of `contracts-go`:
+
+
+View of `commerce/commerce_go` go binding:
 
 ```
-contracts-go/
-├── doc.go
-├── events
-│   ├── event_info.go
-│   └── event_info_test.gox
-├── events.go
-├── go.mod
-├── go.sum
-├── unique_events_test.go
-├── v0.0.1
-│   ├── contracts
-│   │   └── contracts.go
-│   └── legacy
-│       └── contracts.go
-├── v1.0.0
-│   ├── contracts
-│   │   └── contracts.go
-│   ├── contracts_test
-│   │   └── contracts_test.go
-│   └── legacy
-│       └── contracts.go
-└── v1.2.0
-    ├── contracts
-    │   └── contracts.go
-    └── legacy
+commerce
+└── commerce_go
+    ├── doc.go
+    ├── events
+    │   └── event_info.go
+    ├── events.go
+    ├── go.mod
+    ├── go.sum
+    ├── unique_events_test.go
+    └── v0.0.1
         └── contracts.go
+
 ```
 
 ## adding a new version
@@ -140,13 +144,8 @@ To add a new version, follow these step:
 
 * add a new `version` in the configuration
 * run `./build.sh -latest`
-* edit file `contracts-go/events.go` and add the new bindings to the `allEventInfos` variable, as follows:
 
-```
-	allEventInfos = []packageEvent{
-		{v100.UniqueEvents, "100"},
-	}
-```
+**Note:** The config file needs to have all the versions of contracts, in order to keep the event maps handle both old and new versions.
 
 ## tagging
 
@@ -159,15 +158,17 @@ Tagging must be done at 2 levels:
 
 Note: this can also be achieved through the github web interface.
 
+For instance, sub-module level go-binding for `commerce` contracts :
+
 ```
   $ git tag v1.0.0
-  $ git tag contracts-go/v1.0.0
+  $ git tag commerce/commerce_go/v1.0.0
   $ git push origin v1.0.0
-  $ git push origin contracts-go/v1.0.0
+  $ git push origin commerce/commerce_go/v1.0.0
 ```
 
 The version can now be imported into an external project:
 
 ```
-go get -d github.com/eluv-io/contracts-evm-builds/contracts-go@v1.0.0
+go get -d github.com/eluv-io/contracts-evm-builds/commerce/commerce_go@v1.0.0
 ```

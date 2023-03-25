@@ -16,9 +16,10 @@ function build_abigen() {
 function run_abigen() {
   local combined_json=$1
   local pkg=$2
-  local out_file=$3
+  local eventPkg=$3
+  local out_file=$4
   if is_debug; then
-      echo "$abigen_dir/abigen" --pkg="${pkg}" --out "${out_file}" --combined-json "${combined_json}"
+      echo "$abigen_dir/abigen" --pkg="${pkg}" --event-pkg="${eventPkg}" --out "${out_file}" --combined-json "${combined_json}"
   fi
-  "$abigen_dir/abigen" --pkg="${pkg}" --out "${out_file}" --combined-json "${combined_json}"
+  "$abigen_dir/abigen" --pkg="${pkg}" --event-pkg="${eventPkg}" --out "${out_file}" --combined-json "${combined_json}"
 }
