@@ -77,12 +77,7 @@ func (cfg *EventPkgGenConfig) BuildTemplateStruct() map[string]*tmpl.TemplateStr
 		}
 		sort.Sort(version.Collection(versions))
 		latestVer := versions[len(versions)-1].String()
-		if _, ok := tmplStruct.Tags["v"+latestVer+"-dev"]; ok {
-			outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer+"-dev"].TagPackageName
-		} else {
-			outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer].TagPackageName
-		}
-
+		outputDirToTmplStructMap[outputDir].LatestTagPackageName = tmplStruct.Tags["v"+latestVer].TagPackageName
 	}
 	return outputDirToTmplStructMap
 }
