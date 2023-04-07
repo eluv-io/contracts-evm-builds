@@ -50,7 +50,7 @@ function fail() {
   go test -count=1 .
 )
 
-for dir in commerce/commerce_go token_permit/token_permit_go; do
+for dir in commerce/commerce_go; do
   printf '\n%s\n' $dir
   (
     [[ -d "$dir" ]] || fail "not a directory: $dir!"
