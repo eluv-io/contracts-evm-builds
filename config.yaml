@@ -14,7 +14,7 @@ versions:
   -
     tag: "v0.0.0-dev"
     solc: '0.8.13'
-    solidity_file: "src/commerce/ElvTokenPermit.sol"
-    use: "591bce9bce2ae22a4498100d046a07805f63a277"
-    output_folder: "token_permit"
+    solidity_file: "src/commerce/ElvToken.sol"
+    use: "28fdb5bca3826db813608338e0a0712bd7db0c3d"
+    output_folder: "elv_token"
     dependencies: "openzeppelin/=lib/openzeppelin-contracts/"
