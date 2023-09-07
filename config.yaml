@@ -14,7 +14,7 @@ versions:
   -
     tag: "v0.0.0-dev"
     solc: '0.8.13'
-    solidity_file: "src/commerce/ElvToken.sol"
-    use: "272558e8f753529315896ab2ffa7f1eda3fd7ee7"
-    output_folder: "elv_token"
-    dependencies: "openzeppelin/=lib/openzeppelin-contracts/"
+    solidity_file: "src/commerce/ElvTokenUpgradeable.sol"
+    use: "c9168f5c46f901f75d96121ea34c84857aaa9463"
+    output_folder: "elv_token_upgradeable"
+    dependencies: "openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"
