@@ -15,13 +15,13 @@ versions:
     tag: "v0.0.0-dev"
     solc: '0.8.13'
     solidity_file: "src/commerce/ElvTokenUpgradeable.sol"
-    use: "2a90ef00322c7cdac7303114cc216c88894c1748"
+    use: "6092476a88afcaf3f06211d0fd9bbe43a9a8561d"
     output_folder: "elv_token_upgradeable"
     dependencies: "openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"
   -
     tag: "v0.0.0-dev"
     solc: '0.8.13'
     solidity_file: "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol"
-    use: "2a90ef00322c7cdac7303114cc216c88894c1748"
+    use: "6092476a88afcaf3f06211d0fd9bbe43a9a8561d"
     output_folder: "proxy"
     dependencies: "openzeppelin/=lib/openzeppelin-contracts/"
